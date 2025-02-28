@@ -27,8 +27,8 @@
 
                         <tr>
 
-                            <td>{{$order_by_id->customer_name}}</td>
-                            <td>{{$order_by_id->customer_phone}}</td>
+                            <td>{{$order->customer->customer_name}}</td>
+                            <td>{{$order->customer->customer_phone}}</td>
                         </tr>
 
                     </tbody>
@@ -66,9 +66,9 @@
 
                     <tr>
 
-                        <td>{{$order_by_id->shipping_name}}</td>
-                        <td>{{$order_by_id->shipping_address}}</td>
-                        <td>{{$order_by_id->shipping_phone}}</td>
+                        <td>{{$order->shipping->shipping_name}}</td>
+                        <td>{{$order->shipping->shipping_address}}</td>
+                        <td>{{$order->shipping->shipping_phone}}</td>
                     </tr>
 
                     </tbody>
@@ -129,8 +129,8 @@
                     <tr>
                         <td>{{$detail->product_name}}</td>  <!-- Tên sản phẩm -->
                         <td>{{$detail->product_sales_quantity}}</td>  <!-- Số lượng -->
-                        <td>{{$detail->product_price}}</td>  <!-- Giá -->
-                        <td>{{$detail->product_price * $detail->product_sales_quantity}}</td>  <!-- Tổng tiền -->
+                        <td>{{number_format($detail->product_price)}}</td>  <!-- Giá -->
+                        <td>{{number_format($detail->product_price * $detail->product_sales_quantity)}}</td>  <!-- Tổng tiền -->
                         <td></td>
                     </tr>
                     @endforeach

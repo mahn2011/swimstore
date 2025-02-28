@@ -29,6 +29,8 @@ Route::get('/dashboard', 'App\Http\Controllers\AdminController@show_dashboard');
 Route::match(['get', 'post'], '/admin-dashboard', 'App\Http\Controllers\AdminController@dashboard');
 Route::get('/logout', 'App\Http\Controllers\AdminController@logout');
 
+
+
 // category-product
 Route::get('/add-category-product', 'App\Http\Controllers\CategoryProduct@add_category_product');
 Route::get('/edit-category-product/{category_product_id}', 'App\Http\Controllers\CategoryProduct@edit_category_product');
@@ -72,6 +74,8 @@ Route::post('/save-cart', 'App\Http\Controllers\CartController@save_cart');
 Route::get('/show_cart', 'App\Http\Controllers\CartController@show_cart');
 Route::get('/delete-to-cart/{id}', 'App\Http\Controllers\CartController@delete_cart');
 Route::post('/update-cart-quantity', [CartController::class, 'update_cart_quantity'])->name('cart.update_quantity');
+Route::get('/paid_orders', [CartController::class, 'show_paid_orders']);
+
 
 //checkout
 Route::post('/add-customer', 'App\Http\Controllers\CheckoutController@add_customer');

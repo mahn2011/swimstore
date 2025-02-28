@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Category;
 use App\Models\Brand;
+use App\Models\Order;
 use Illuminate\Support\Facades\Redirect;
 class CartController extends Controller
 {
@@ -108,5 +109,21 @@ class CartController extends Controller
             'tax' => number_format($tax) . ' VNĐ', // Thuế
             'item_total' => number_format(Cart::get($id)->price * Cart::get($id)->quantity) . ' VNĐ' // Tổng tiền của sản phẩm
         ]);
+    }
+    public function show_paid_orders(Request $request)
+    {
+        $meta_desc = " ";
+        $meta_keywords = " ";
+        $meta_title = 'Đơn Mua';
+        $url_canonical = $request->url();
+        $cate_product = Category::where('category_status', 1)->orderByDesc('category_id')->get();
+        $brand_product = Brand::where('brand_status', 1)->orderByDesc('brand_id')->get();
+        // Lấy danh sách đơn hàng đã thanh toán (payment_status = 1)
+        $orders = Order::where('order_status', 'Đang Chờ Xử Lý')->orderBy('order_id', 'desc')->get();
+
+        return view('pages.cart.paid_orders')->with('orders', $orders)
+            ->with('category',$cate_product)->with('brand',$brand_product)
+            ->with('meta_desc',$meta_desc)->with('meta_keywords',$meta_keywords)
+            ->with('meta_title',$meta_title)->with('url_canonical',$url_canonical);
     }
 }

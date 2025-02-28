@@ -8,7 +8,7 @@ class Order extends Model
 {
     public $timestamps = false;// set time
     protected $fillable = [
-        'order_total', 'order_status','	customer_id	', 'shipping_id','payment_id',
+        'order_total', 'order_status','	customer_id', 'shipping_id','payment_id',
     ];
     protected $primaryKey = 'order_id';
     protected $table = 'tbl_order';
@@ -23,10 +23,11 @@ class Order extends Model
         return $this->belongsTo(Shipping::class, 'shipping_id');
     }
     // Quan hệ với OrderDetail (1 Đơn hàng có nhiều sản phẩm)
-    public function orderDetails()
-    {
-        return $this->hasMany(OrderDetail::class, 'order_details_id');
+    public function orderDetails() {
+        return $this->hasMany(OrderDetail::class, 'order_id', 'order_id');
     }
+
+
     // Quan hệ với Payment (1 Đơn hàng có 1 phương thức thanh toán)
     public function payment()
     {

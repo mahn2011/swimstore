@@ -49,10 +49,10 @@
                     </tr>
                     </thead>
                     <tbody>
-                    @foreach($all_order as $key => $order)
+                    @foreach($orders as $key => $order)
                         <tr>
                             <td><label class="i-checks m-b-none"><input type="checkbox" name="post[]"><i></i></label></td>
-                            <td>{{$order ->customer_name}}</td>
+                            <td>{{$order->customer->customer_name}}</td>
                             <td>{{$order ->order_total}}</td>
                             <td>{{$order ->order_status}}</td>
                             <td>

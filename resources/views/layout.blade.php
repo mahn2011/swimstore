@@ -123,7 +123,7 @@
                             </li>
 
                             <li><a href="{{URL::to('/show_cart')}}"><i class="fa fa-shopping-cart"></i> Giỏ Hàng</a></li>
-
+                            <li><a href="{{URL::to('/paid_orders')}}"><i class="fa fa-shopping-cart"></i> Đơn Hàng</a></li>
                             <li>
                                 <?php if ($customer_id != NULL) { ?>
                                 <a href="{{URL::to('/logout-checkout')}}"><i class="fa fa-lock"></i> Đăng Xuất</a>

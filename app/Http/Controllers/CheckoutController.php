@@ -43,8 +43,8 @@ class CheckoutController extends Controller
 //            ->get(); // Lấy danh sách sản phẩm
 //        return view('admin.view_order', compact('order_by_id', 'order_details'));
         $order = Order::with(['customer', 'shipping', 'orderDetails.product'])->where('order_id', $orderID)->first();
-
-        return view('admin.view_order', compact('order'));
+        $order_details = $order->orderDetails;
+        return view('admin.view_order', compact('order', 'order_details'));
     }
 
     public function login_checkout(Request $request){
@@ -118,9 +118,8 @@ class CheckoutController extends Controller
         return view('pages.checkout.payment')->with('category',$cate_product)->with('brand',$brand_product)
             ->with('meta_desc',$meta_desc)->with('meta_keywords',$meta_keywords)
             ->with('meta_title',$meta_title)->with('url_canonical',$url_canonical);
-    }
-    public function order_place(Request $request){
-        // insert payment_method dùng controller truy vấn DB trực tiếp
+    }public function order_place(Request $request){
+    // insert payment_method dùng controller truy vấn DB trực tiếp
 //        $data = array();
 //        $data['payment_method']=$request->payment_option;
 //        $data['payment_status']='Đang Chờ Xử Lý';
@@ -170,58 +169,61 @@ class CheckoutController extends Controller
 //            echo 'Paypal';
 //        }
 
-        //   return Redirect::to('/payment');
-        // Dùng Model để truy vấn
-        $meta_desc = " ";
-        $meta_keywords = " ";
-        $meta_title = 'SwimWear-Store';
-        $url_canonical = $request->url();
-        // Thêm thông tin thanh toán
-        $payment = new Payment();
-        $payment->payment_method = $request->payment_option;
-        $payment->payment_status = 'Đang Chờ Xử Lý';
-        $payment->save();
+    //   return Redirect::to('/payment');
+    // Dùng Model để truy vấn
+    $meta_desc = " ";
+    $meta_keywords = " ";
+    $meta_title = 'SwimWear-Store';
+    $url_canonical = $request->url();
+    // Thêm thông tin thanh toán
+    $payment = new Payment();
+    $payment->payment_method = $request->payment_option;
+    $payment->payment_status = 'Đang Chờ Xử Lý';
+    $payment->save();
 
-        // Tính tổng tiền hàng
-        $subtotal = Cart::getSubTotal();
-        $tax = $subtotal * 0.1;
-        $shipping_fee = 0;
-        $total = $subtotal + $tax + $shipping_fee;
+    // Tính tổng tiền hàng
+    $subtotal = Cart::getSubTotal();
+    $tax = $subtotal * 0.1;
+    $shipping_fee = 0;
+    $total = $subtotal + $tax + $shipping_fee;
 
-        // Tạo đơn hàng
-        $order = new Order();
-        $order->customer_id = Session::get('customer_id');
-        $order->shipping_id = Session::get('shipping_id');
-        $order->payment_id = $payment->payment_id;
-        $order->order_total = $total;
-        $order->order_status = 'Đang Chờ Xử Lý';
-        $order->save();
+    // Tạo đơn hàng
+    $order = new Order();
+    $order->customer_id = Session::get('customer_id');
+    $order->shipping_id = Session::get('shipping_id');
+    $order->payment_id = $payment->payment_id;
+    $order->order_total = $total;
+    $order->order_status = 'Đang Chờ Xử Lý';
+    $order->save();
 
-        // Lưu chi tiết đơn hàng
-        foreach (Cart::getContent() as $item) {
-            $orderDetail = new OrderDetail();
-            $orderDetail->order_id = $order->order_id;
-            $orderDetail->product_id = $item->id;
-            $orderDetail->product_name = $item->name;
-            $orderDetail->product_price = $item->price;
-            $orderDetail->product_sales_quantity = $item->quantity;
-            $orderDetail->save();
-        }
-
-        // Xử lý phương thức thanh toánnnn
-        Cart::clear();
-        if ($payment->payment_method == '1') {
-            $cate_product = Category::where('category_status', 1)->orderBy('category_id', 'desc')->get();
-            $brand_product = Brand::where('brand_status', 1)->orderBy('brand_id', 'desc')->get();
-            return view('pages.checkout.handcash')->with('category',$cate_product)->with('brand',$brand_product)
-                ->with('meta_desc',$meta_desc)->with('meta_keywords',$meta_keywords)
-                ->with('meta_title',$meta_title)->with('url_canonical',$url_canonical);
-        } elseif ($payment->payment_method == '2') {
-            return redirect('/vnpay');
-        } else {
-            return redirect('/paypal');
-        }
+    // Lưu chi tiết đơn hàng
+    foreach (Cart::getContent() as $item) {
+        $orderDetail = new OrderDetail();
+        $orderDetail->order_id = $order->order_id;
+        $orderDetail->product_id = $item->id;
+        $orderDetail->product_name = $item->name;
+        $orderDetail->product_price = $item->price;
+        $orderDetail->product_sales_quantity = $item->quantity;
+        $orderDetail->save();
     }
+
+    // Xử lý phương thức thanh toánnnn
+    Cart::clear();
+    if ($payment->payment_method == '1') {
+        $cate_product = Category::where('category_status', 1)->orderBy('category_id', 'desc')->get();
+        $brand_product = Brand::where('brand_status', 1)->orderBy('brand_id', 'desc')->get();
+        return view('pages.checkout.handcash')->with('category',$cate_product)->with('brand',$brand_product)
+            ->with('meta_desc',$meta_desc)->with('meta_keywords',$meta_keywords)
+            ->with('meta_title',$meta_title)->with('url_canonical',$url_canonical);
+    } elseif ($payment->payment_method == '2') {
+        return redirect('/vnpay');
+    } else {
+        return redirect('/paypal');
+    }
+}
+
+
+
     public function logout_checkout(){
         Session::flush();
         return Redirect::to('/login-checkout');

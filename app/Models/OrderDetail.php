@@ -8,18 +8,17 @@ class OrderDetail extends Model
 {
     public $timestamps = false;// set time
     protected $fillable = [
-        'product_name', 'product_price','product_id', '	order_id', 'product_sales_quantity'
+        'product_name', 'product_price','product_id', 'order_id', 'product_sales_quantity'
     ];
     protected $primaryKey = 'order_details_id';
     protected $table = 'tbl_order_details';
     // Quan hệ với Product (1 OrderDetail thuộc về 1 sản phẩm)
-    public function product()
-    {
-        return $this->belongsTo(Product::class, 'product_id');
+    public function product() {
+        return $this->belongsTo(Product::class, 'product_id', 'product_id');
     }
+
     // Quan hệ với Order (Nhiều sản phẩm thuộc về 1 đơn hàng)
-    public function order()
-    {
-        return $this->belongsTo(Order::class, 'order_id');
+    public function order() {
+        return $this->belongsTo(Order::class, 'order_id', 'order_id');
     }
 }
