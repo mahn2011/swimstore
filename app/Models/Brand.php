@@ -14,6 +14,6 @@ class Brand extends Model
     protected $table = 'tbl_brand_product';
     public function products()
     {
-        return $this->hasMany(Product::class, 'brand_id', 'id');
+        return $this->hasMany(Product::class, 'brand_id', 'brand_id');
     }
 }
